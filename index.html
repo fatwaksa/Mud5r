@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تطبيق مالي</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "SF Pro Display", sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+
+    h1, h2 {
+      color: #007aff;
+      text-align: center;
+    }
+
+    .page {
+      display: none;
+      padding: 20px;
+      padding-bottom: 90px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      background: white;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      background: #007aff;
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 17px;
+      border-radius: 12px;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: background 0.3s;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #005ecb;
+    }
+
+    .divider {
+      border-top: 1px solid #ddd;
+      margin: 25px 0;
+    }
+
+    .result {
+      background: #fff;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 15px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .result h3 {
+      margin-bottom: 10px;
+    }
+
+    .safe { color: #2ecc71; }
+    .medium { color: #e67e22; }
+    .danger { color: #e74c3c; }
+
+    .progress-bar {
+      background-color: #eee;
+      height: 15px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-inner {
+      height: 100%;
+      transition: width 0.4s ease;
+    }
+
+    .service-select {
+      list-style: none;
+      display: flex;
+      gap: 10px;
+      padding: 0;
+      margin-top: 8px;
+    }
+
+    .service-select li {
+      flex: 1;
+      text-align: center;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .service-select li.active {
+      background: #007aff;
+      color: white;
+      font-weight: bold;
+      border-color: #007aff;
+    }
+
+    /* Bottom Bar */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 65px;
+      background: #fff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -1px 10px rgba(0,0,0,0.1);
+      z-index: 999;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    .bottom-bar button {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .bottom-bar button.active {
+      color: #007aff;
+    }
+
+    .bottom-bar i {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 480px) {
+      h1, h2 { font-size: 20px; }
+      input, select, button { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- الصفحة الرئيسية -->
+  <div id="home" class="page active">
+    <h2>🏠 الصفحة الرئيسية</h2>
+    <p style="text-align:center;">مرحبًا بك في تطبيقك المالي الذكي. حلل نفقاتك وتابِع التزاماتك.</p>
+  </div>
+
+  <!-- صفحة الحساب -->
+  <div id="account" class="page">
+    <h1>تحليل وضعك المالي</h1>
+
+    <div class="form-group">
+      <label>الراتب الشهري</label>
+      <input type="number" id="salary" placeholder="مثال: 8000">
+    </div>
+
+    <div class="form-group">
+      <label>نوع العمل</label>
+      <select id="jobType">
+        <option value="طالب">طالب</option>
+        <option value="حكومي">موظف حكومي</option>
+        <option value="شركة">شركة خاصة</option>
+        <option value="اخرى">أخرى</option>
+      </select>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="form-group"><label>مصاريف الأكل</label><input type="number" id="food"></div>
+    <div class="form-group"><label>الترفيه</label><input type="number" id="entertainment"></div>
+    <div class="form-group"><label>الإنترنت</label><input type="number" id="internet"></div>
+    <div class="form-group"><label>العمل (مواصلات/معدات)</label><input type="number" id="workCosts"></div>
+    <div class="form-group"><label>الالتزامات (قروض، إيجار...)</label><input type="number" id="commitments"></div>
+
+    <div class="divider"></div>
+
+    <label>هل تستخدم تابي أو تمارا؟</label>
+    <ul class="service-select" id="serviceChoice">
+      <li onclick="chooseService('none')" class="active">لا شيء</li>
+      <li onclick="chooseService('tabby')">تابي</li>
+      <li onclick="chooseService('tamara')">تمارا</li>
+    </ul>
+
+    <div id="tabbyFields" style="display:none">
+      <div class="form-group"><label>مبلغ تابي</label><input type="number" id="tabby"></div>
+      <div class="form-group"><label>عدد الأشهر</label><input type="number" id="tabbyMonths"></div>
+    </div>
+
+    <div id="tamaraFields" style="display:none">
+      <div class="form-group"><label>مبلغ تمارا</label><input type="number" id="tamara"></div>
+      <div class="form-group"><label>عدد الأشهر</label><input type="number" id="tamaraMonths"></div>
+    </div>
+
+
+‎<!-- زرّين منفصلين -->
+<div class="form-group" style="margin-top: 25px;">
+  <button onclick="calculate()">🧮 احسب وضعك المالي</button>
+</div>
+
+<div class="form-group">
+  <button onclick="exportPDF()" style="background:#28a745;">📄 تصدير تقرير PDF</button>
+</div>
+
+
+
+    <div id="result" class="result" style="display:none;"></div>
+  </div>
+
+  <!-- صفحة الإعدادات -->
+  <div id="settings" class="page">
+    <h2>⚙️ الإعدادات</h2>
+    <p style="text-align:center;">قريبًا: إعدادات اللغة، العملة، الإشعارات، والمزيد.</p>
+  </div>
+
+  <!-- شريط التنقل -->
+  <div class="bottom-bar">
+    <button onclick="navigate('home')" id="tab-home" class="active">
+      <i class="fas fa-house"></i>
+      الرئيسية
+    </button>
+    <button onclick="navigate('account')" id="tab-account">
+      <i class="fas fa-user-circle"></i>
+      الحساب
+    </button>
+    <button onclick="navigate('settings')" id="tab-settings">
+      <i class="fas fa-cog"></i>
+      الإعدادات
+    </button>
+  </div>
+
+  <script>
+    let selectedService = 'none';
+
+    function navigate(pageId) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById(pageId).classList.add("active");
+
+      document.querySelectorAll(".bottom-bar button").forEach(btn => btn.classList.remove("active"));
+      document.getElementById("tab-" + pageId).classList.add("active");
+    }
+
+    function chooseService(service) {
+      selectedService = service;
+
+      document.querySelectorAll('#serviceChoice li').forEach(li => li.classList.remove('active'));
+      document.querySelector(`#serviceChoice li[onclick="chooseService('${service}')"]`).classList.add('active');
+
+      document.getElementById('tabbyFields').style.display = service === 'tabby' ? 'block' : 'none';
+      document.getElementById('tamaraFields').style.display = service === 'tamara' ? 'block' : 'none';
+    }
+
+    function calculate() {
+      const salary = parseFloat(document.getElementById('salary').value) || 0;
+      const food = parseFloat(document.getElementById('food').value) || 0;
+      const entertainment = parseFloat(document.getElementById('entertainment').value) || 0;
+      const internet = parseFloat(document.getElementById('internet').value) || 0;
+      const workCosts = parseFloat(document.getElementById('workCosts').value) || 0;
+      const commitments = parseFloat(document.getElementById('commitments').value) || 0;
+
+      const tabby = selectedService === 'tabby' ? parseFloat(document.getElementById('tabby').value) || 0 : 0;
+      const tamara = selectedService === 'tamara' ? parseFloat(document.getElementById('tamara').value) || 0 : 0;
+
+      const total = food + entertainment + internet + workCosts + commitments + tabby + tamara;
+      const net = salary - total;
+      const percent = (total / salary) * 100;
+
+      let status = '', advice = '', className = '', color = '';
+      if (percent <= 50) {
+        status = "وضعك آمن ✅";
+        advice = "استمر على هذا النمط وابدأ الادخار.";
+        className = "safe"; color = "#2ecc71";
+      } else if (percent <= 80) {
+        status = "وضعك متوسط ⚠️";
+        advice = "راجع مصاريفك الترفيهية وخططك المالية.";
+        className = "medium"; color = "#e67e22";
+      } else {
+        status = "⚠️ وضعك المالي خطر جدًا";
+        advice = "قلل النفقات فورًا! حاول إعادة ترتيب أولوياتك.";
+        className = "danger"; color = "#e74c3c";
+      }
+
+      document.getElementById("result").style.display = "block";
+      document.getElementById("result").innerHTML = `
+        <h3>صافي الدخل المتبقي: ${net.toLocaleString()} ريال</h3>
+        <p>إجمالي الالتزامات: ${total.toLocaleString()} ريال</p>
+        <p>النسبة من الراتب: ${percent.toFixed(1)}%</p>
+        <div class="progress-bar">
+          <div class="progress-inner" style="width:${Math.min(percent, 100)}%; background:${color};"></div>
+        </div>
+        <p class="${className}" style="margin-top:15px;">${status}</p>
+        <p><strong>نصيحة:</strong> ${advice}</p>
+      `;
+    }
+  </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+  async function exportPDF() {
+    const result = document.getElementById("result");
+    if (!result || result.style.display === "none") {
+      alert("يجب أولاً حساب وضعك المالي قبل التصدير.");
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    let text = result.innerText;
+    const lines = doc.splitTextToSize(text, 180); // لف السطور الطويلة
+
+    doc.setFont("Helvetica");
+    doc.setFontSize(14);
+    doc.text(lines, 15, 20);
+
+    doc.save("تقرير_مالي.pdf");
+  }
+</script>
+
+</body>
+</html>
